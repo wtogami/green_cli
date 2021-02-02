@@ -17,5 +17,5 @@ class WatchOnlyAuthenticator:
         return gdk.login_watch_only(session_obj, self._username.get(), self._password.get())
 
 
-def get_authenticator(network, config_dir):
-    return WatchOnlyAuthenticator(config_dir)
+def get_authenticator(options):
+    return WatchOnlyAuthenticator(options['config_dir'])

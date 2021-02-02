@@ -79,5 +79,5 @@ class HWIDevice(HardwareDevice):
                 .format(device['error']))
         return HWIDevice(device)
 
-def get_authenticator(network, config_dir):
+def get_authenticator(options):
     return HWIDevice.get_device()

@@ -25,5 +25,5 @@ class DefaultAuthenticator(SoftwareAuthenticator):
         return pin_data
 
 
-def get_authenticator(network, config_dir):
-    return DefaultAuthenticator(config_dir)
+def get_authenticator(options):
+    return DefaultAuthenticator(options['config_dir'])
