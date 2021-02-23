@@ -39,6 +39,7 @@ from green_cli.param_types import (
 )
 
 import green_cli.twofa
+import green_cli.tx
 
 # In older verions of python (<3.6?) json.loads does not respect the order of the input
 # unless specifically passed object_pairs_hook=collections.OrderedDict
