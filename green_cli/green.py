@@ -670,7 +670,7 @@ def email(session, email_address):
 @with_login
 @gdk_resolve
 def sms(session, number):
-    """Enabled SMS 2fa"""
+    """Enable SMS 2fa"""
     return _enable_2fa(session, 'sms', number)
 
 @enabletwofa.command()
@@ -684,6 +684,15 @@ def phone(session, number):
 @enabletwofa.command()
 @with_login
 @gdk_resolve
+def telegram(session):
+    """Enable telegram 2fa"""
+    telegram_url = session.get_twofactor_config()['telegram']['data']
+    click.echo('Please visit: {}'.format(telegram_url))
+    return _enable_2fa(session, 'telegram', telegram_url)
+
+@enabletwofa.command()
+@with_login
+@gdk_resolve
 def gauth(session):
     """Enable gauth 2fa"""
     data = session.get_twofactor_config()['gauth']['data']
@@ -692,7 +701,7 @@ def gauth(session):
     return _enable_2fa(session, 'gauth', data)
 
 @twofa.command()
-@click.argument('factor', type=click.Choice(['email', 'sms', 'phone', 'gauth']))
+@click.argument('factor', type=click.Choice(['email', 'sms', 'phone', 'gauth','telegram']))
 @with_login
 @gdk_resolve
 def disable(session, factor):
