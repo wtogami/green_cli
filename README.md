@@ -83,3 +83,76 @@ $ green-liquid-cli --network liquid sendtoaddress
 ```
 
 For now wallet creation is disabled on use on mainnet/liquid mainnet
+
+# Manual coin selection (alpha - use at your own risk)
+
+WARNING: Please note that green-cli in general and the tx/coin selection
+functions in particular are alpha software and not currently recommended
+for mainnet use. Loss of funds may occur.
+
+First, create a new 'scratch' transaction using the `tx` command
+```
+$ green-cli --network testnet tx new
+```
+
+Add outputs to the transaction. At any time you can start again by
+running `tx new` again which will discard the scratch tx and create a
+new one.
+```
+$ green-cli --network testnet tx addoutput mkHS9ne12qx9pS9VojpwU5xtRd4T7X7ZUt 1000
+```
+
+At any point you can examine the scratch tx using `tx info`, e.g.
+```
+$ green-cli --network testnet tx info
+user signed: False
+server signed: False
+output: mkHS9ne12qx9pS9VojpwU5xtRd4T7X7ZUt 1000
+total btc: 1000
+fee: 210 sat
+fee rate: 1000 sat/kb
+```
+
+Use `tx coin status` to see the currently selected and available
+coins/utxos:
+
+```
+$ green-cli --network testnet tx coin status
+selected:
+	1970 csv 2431 confs f4c8b1923428f335727deef33d1d96fcd6131d4acef1e64f234d0c40fec2ba0e:1
+	total: 1970
+available:
+	1970 csv 2431 confs f4c8b1923428f335727deef33d1d96fcd6131d4acef1e64f234d0c40fec2ba0e:1
+	994760 csv 2430 confs 2d2ad400ccdc7413e7f0df1d1d547666a7cff870682a3daf376597fd95576405:0
+	1234 csv 2422 confs 5a81ef1596441bdcb7e2dea7a50577c209811f1a6bb52bfc6ccec472b27c4405:1
+	1234 csv 2421 confs 9b9792dc90a9ab20cc8fa0d47ce9cce6be2e00034d6ce17d715bcd41dc130c5d:0
+	total: 999198
+```
+
+Coins can be added using `tx coin select`
+
+```
+$ green-cli --network testnet tx coin select 5a81ef1596441bdcb7e2dea7a50577c209811f1a6bb52bfc6ccec472b27c4405:1
+$ green-cli --network testnet tx coin status
+selected:
+	1970 csv 2431 confs f4c8b1923428f335727deef33d1d96fcd6131d4acef1e64f234d0c40fec2ba0e:1
+	1234 csv 2422 confs 5a81ef1596441bdcb7e2dea7a50577c209811f1a6bb52bfc6ccec472b27c4405:1
+	total: 3204
+available:
+	1970 csv 2431 confs f4c8b1923428f335727deef33d1d96fcd6131d4acef1e64f234d0c40fec2ba0e:1
+	994760 csv 2430 confs 2d2ad400ccdc7413e7f0df1d1d547666a7cff870682a3daf376597fd95576405:0
+	1234 csv 2422 confs 5a81ef1596441bdcb7e2dea7a50577c209811f1a6bb52bfc6ccec472b27c4405:1
+	1234 csv 2421 confs 9b9792dc90a9ab20cc8fa0d47ce9cce6be2e00034d6ce17d715bcd41dc130c5d:0
+	total: 999198
+```
+
+Coins can be deselected using `tx coin deselect`. Both `tx coin select`
+and `tx coin deselect` accept wildcards, for example to select all
+available coins:
+
+```
+$ green-cli --network testnet tx coin select *:*
+```
+
+When tx transaction is ready, use `tx sign` and `tx send`. The raw
+transaction can be inspected first by calling `tx raw`
