@@ -744,6 +744,14 @@ def dispute(session, reset_email):
     return gdk.twofactor_reset(session.session_obj, reset_email, is_dispute)
 
 @twofa_reset.command()
+@click.argument('reset_email')
+@with_login
+@gdk_resolve
+def undo(session, reset_email):
+    """Undo a 2fa reset request"""
+    return gdk.twofactor_undo_reset(session.session_obj, reset_email)
+
+@twofa_reset.command()
 @with_login
 @gdk_resolve
 def cancel(session):
