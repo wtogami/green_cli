@@ -36,21 +36,26 @@ class HWIDevice(HardwareDevice):
         path = HWIDevice._path_to_string(path)
         return hwilib.commands.getxpub(self._device, path)['xpub']
 
-    def sign_message(self, path: List[int], message: str) -> bytes:
+    def sign_message(self, details: Dict) -> Dict:
         """Return der encoded signature of a message
 
         path: BIP32 path of key to use for signing
         message: Message to be signed
         """
-        path = HWIDevice._path_to_string(path)
+        message = details['message']
+        path = HWIDevice._path_to_string(details['path'])
 
         click.echo('Signing with hardware device {}'.format(self.name))
         click.echo('Please check the device for interaction')
 
         signature = hwilib.commands.signmessage(self._device, message, path)['signature']
-        return wally.ec_sig_to_der(base64.b64decode(signature)[1:])
+        signature = base64.b64decode(signature)
+        if len(signature) == wally.EC_SIGNATURE_RECOVERABLE_LEN:
+            signature = signature[1:]
 
-    def sign_tx(self, details):
+        return {'signature': wally.ec_sig_to_der(signature).hex()}
+
+    def sign_tx(self, details: Dict):
         raise NotImplementedError("hwi sign tx not implemented")
 
     @staticmethod
